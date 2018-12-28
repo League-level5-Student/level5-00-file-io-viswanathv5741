@@ -1,5 +1,19 @@
 package _03_To_Do_List;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 public class ToDoList {
 	/*
 	 * Create a program with five buttons, add task, view tasks, remove task, save list, and load list. 
@@ -21,4 +35,75 @@ public class ToDoList {
 	 * 
 	 * When the program starts, it should automatically load the last saved file into the list.
 	 */
+	
+	JFrame frame = new JFrame();
+	JPanel panel = new JPanel();
+	JButton addButton = new JButton();
+	JButton viewButton = new JButton();
+	JButton removeButton = new JButton();
+	JButton saveButton = new JButton();
+	JButton loadButton = new JButton();
+	ArrayList<String> toDo = new ArrayList<String>();
+	
+	public ToDoList() {
+		frame.add(panel);
+		panel.add(addButton);
+		panel.add(viewButton);
+		panel.add(removeButton);
+		panel.add(saveButton);
+		panel.add(loadButton);
+		addButton.addActionListener((ActionListener) this);
+		viewButton.addActionListener((ActionListener) this);
+		removeButton.addActionListener((ActionListener) this);
+		saveButton.addActionListener((ActionListener) this);
+		loadButton.addActionListener((ActionListener) this);
+
+	}
+	
+	public void ActionPerformed(ActionEvent e) {
+		if (e.getSource().equals(addButton)) {
+			toDo.add(JOptionPane.showInputDialog("Add a task"));
+		}
+		else if (e.getSource().equals(viewButton)) {
+			JOptionPane.showMessageDialog(panel, toDo);
+		}
+		else if (e.getSource().equals(removeButton)) {
+			toDo.remove(JOptionPane.showInputDialog("What is the index of the task you want to remove starting a 0"));
+		}
+		else if (e.getSource().equals(saveButton)) {
+			String fileName = JOptionPane.showInputDialog("What file do you want to add the tasks to?");
+			try {
+				FileWriter fw = new FileWriter(fileName + ".txt", true);
+				for (int i=0; i<toDo.size(); i++) {
+					fw.write(toDo.get(i));
+					fw.write("/n");
+				}
+				fw.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		else if (e.getSource().equals(loadButton)) {
+			String fileLoad = JOptionPane.showInputDialog("What file would you like to open?");
+			String list = "";
+			try {
+				BufferedReader fr = new BufferedReader(new FileReader(fileLoad + ".txt"));
+				try {
+					while (fr.readLine() != null) {
+						list += fr.readLine() + "/n";
+					}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	
+	
 }
