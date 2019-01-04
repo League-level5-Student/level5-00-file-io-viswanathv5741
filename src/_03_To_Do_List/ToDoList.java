@@ -3,6 +3,7 @@ package _03_To_Do_List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -14,7 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class ToDoList {
+public class ToDoList implements ActionListener{
 	/*
 	 * Create a program with five buttons, add task, view tasks, remove task, save list, and load list. 
 	 * 
@@ -52,15 +53,26 @@ public class ToDoList {
 		panel.add(removeButton);
 		panel.add(saveButton);
 		panel.add(loadButton);
-		addButton.addActionListener((ActionListener) this);
+		addButton.setText("Add");
+		viewButton.setText("View");
+		removeButton.setText("Remove");
+		saveButton.setText("Save");
+		loadButton.setText("Load");
+		addButton.addActionListener(this);
 		viewButton.addActionListener((ActionListener) this);
 		removeButton.addActionListener((ActionListener) this);
 		saveButton.addActionListener((ActionListener) this);
 		loadButton.addActionListener((ActionListener) this);
+		frame.setVisible(true);
+		frame.pack();
 
 	}
 	
-	public void ActionPerformed(ActionEvent e) {
+	public static void main (String[] args) {
+		ToDoList list = new ToDoList();
+	}
+	
+	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(addButton)) {
 			toDo.add(JOptionPane.showInputDialog("Add a task"));
 		}
@@ -68,15 +80,17 @@ public class ToDoList {
 			JOptionPane.showMessageDialog(panel, toDo);
 		}
 		else if (e.getSource().equals(removeButton)) {
-			toDo.remove(JOptionPane.showInputDialog("What is the index of the task you want to remove starting a 0"));
+			String task = JOptionPane.showInputDialog("What task do you want to remove?");
+			toDo.remove(toDo.indexOf(task));
+			//toDo.remove(JOptionPane.showInputDialog("What is the index of the task you want to remove starting a 0"));
 		}
 		else if (e.getSource().equals(saveButton)) {
 			String fileName = JOptionPane.showInputDialog("What file do you want to add the tasks to?");
 			try {
-				FileWriter fw = new FileWriter(fileName + ".txt", true);
+				FileWriter fw = new FileWriter(new File(fileName + ".txt"), true);
 				for (int i=0; i<toDo.size(); i++) {
 					fw.write(toDo.get(i));
-					fw.write("/n");
+					fw.write("\n");
 				}
 				fw.close();
 			} catch (IOException e1) {
@@ -86,17 +100,20 @@ public class ToDoList {
 		}
 		else if (e.getSource().equals(loadButton)) {
 			String fileLoad = JOptionPane.showInputDialog("What file would you like to open?");
-			String list = "";
+			//String list = "";
 			try {
 				BufferedReader fr = new BufferedReader(new FileReader(fileLoad + ".txt"));
 				try {
-					while (fr.readLine() != null) {
-						list += fr.readLine() + "/n";
+					String line = fr.readLine();
+					while (line != null) {
+						toDo.add(line);
+						line = fr.readLine();
 					}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+	
 			} catch (FileNotFoundException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
